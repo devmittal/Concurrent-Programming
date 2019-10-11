@@ -1,0 +1,112 @@
+#!/bin/bash
+
+get_seeded_random()
+{
+  seed="$1"
+  openssl enc -aes-256-ctr -pass pass:"$seed" -nosalt \
+    </dev/zero 2>/dev/null
+}
+
+shuf -i1-10 --random-source=<(get_seeded_random 10) > case3.txt
+sort -n case3.txt > linux_test_merge.txt
+./mysort case3.txt -o test_merge.txt -t 2 --alg=fj
+cmp --silent test_merge.txt linux_test_merge.txt && echo "Pass" || echo "Fail"
+
+shuf -i1-100 --random-source=<(get_seeded_random 10) > case3.txt
+sort -n case3.txt > linux_test_merge.txt
+./mysort case3.txt -o test_merge.txt -t 1 --alg=fj
+cmp --silent test_merge.txt linux_test_merge.txt && echo "Pass" || echo "Fail"
+
+shuf -i1-5214 --random-source=<(get_seeded_random 10) > case3.txt
+sort -n case3.txt > linux_test_merge.txt
+./mysort case3.txt -o test_merge.txt -t 12 --alg=fj
+cmp --silent test_merge.txt linux_test_merge.txt && echo "Pass" || echo "Fail"
+
+shuf -i1-20000 --random-source=<(get_seeded_random 10) > case3.txt
+sort -n case3.txt > linux_test_merge.txt
+./mysort case3.txt -o test_merge.txt -t 1 --alg=fj
+cmp --silent test_merge.txt linux_test_merge.txt && echo "Pass" || echo "Fail"
+
+shuf -i1-20000 --random-source=<(get_seeded_random 10) > case3.txt
+sort -n case3.txt > linux_test_merge.txt
+./mysort case3.txt -o test_merge.txt -t 2 --alg=fj
+cmp --silent test_merge.txt linux_test_merge.txt && echo "Pass" || echo "Fail"
+
+shuf -i1-100000 --random-source=<(get_seeded_random 10) > case3.txt
+sort -n case3.txt > linux_test_merge.txt
+./mysort case3.txt -o test_merge.txt -t 9 --alg=fj
+cmp --silent test_merge.txt linux_test_merge.txt && echo "Pass" || echo "Fail"
+
+shuf -i1-200000 --random-source=<(get_seeded_random 10) > case3.txt
+sort -n case3.txt > linux_test_merge.txt
+./mysort case3.txt -o test_merge.txt -t 2 --alg=fj
+cmp --silent test_merge.txt linux_test_merge.txt && echo "Pass" || echo "Fail"
+
+shuf -i1-500000 --random-source=<(get_seeded_random 10) > case3.txt
+sort -n case3.txt > linux_test_merge.txt
+./mysort case3.txt -o test_merge.txt -t 12 --alg=fj
+cmp --silent test_merge.txt linux_test_merge.txt && echo "Pass" || echo "Fail"
+
+shuf -i1-10 --random-source=<(get_seeded_random 10) > case3.txt
+sort -n case3.txt > linux_test_merge.txt
+./mysort case3.txt -o test_merge.txt -t 2 --alg=bucket
+cmp --silent test_merge.txt linux_test_merge.txt && echo "Pass" || echo "Fail"
+
+shuf -i1-100 --random-source=<(get_seeded_random 10) > case3.txt
+sort -n case3.txt > linux_test_merge.txt
+./mysort case3.txt -o test_merge.txt -t 1 --alg=bucket
+cmp --silent test_merge.txt linux_test_merge.txt && echo "Pass" || echo "Fail"
+
+shuf -i1-5214 --random-source=<(get_seeded_random 10) > case3.txt
+sort -n case3.txt > linux_test_merge.txt
+./mysort case3.txt -o test_merge.txt -t 12 --alg=bucket
+cmp --silent test_merge.txt linux_test_merge.txt && echo "Pass" || echo "Fail"
+
+shuf -i1-20000 --random-source=<(get_seeded_random 10) > case3.txt
+sort -n case3.txt > linux_test_merge.txt
+./mysort case3.txt -o test_merge.txt -t 1 --alg=bucket
+cmp --silent test_merge.txt linux_test_merge.txt && echo "Pass" || echo "Fail"
+
+shuf -i1-20000 --random-source=<(get_seeded_random 10) > case3.txt
+sort -n case3.txt > linux_test_merge.txt
+./mysort case3.txt -o test_merge.txt -t 2 --alg=bucket
+cmp --silent test_merge.txt linux_test_merge.txt && echo "Pass" || echo "Fail"
+
+shuf -i1-100000 --random-source=<(get_seeded_random 10) > case3.txt
+sort -n case3.txt > linux_test_merge.txt
+./mysort case3.txt -o test_merge.txt -t 9 --alg=bucket
+cmp --silent test_merge.txt linux_test_merge.txt && echo "Pass" || echo "Fail"
+
+shuf -i1-200000 --random-source=<(get_seeded_random 10) > case3.txt
+sort -n case3.txt > linux_test_merge.txt
+./mysort case3.txt -o test_merge.txt -t 2 --alg=bucket
+cmp --silent test_merge.txt linux_test_merge.txt && echo "Pass" || echo "Fail"
+
+shuf -i1-500000 --random-source=<(get_seeded_random 10) > case3.txt
+sort -n case3.txt > linux_test_merge.txt
+./mysort case3.txt -o test_merge.txt -t 12 --alg=bucket
+cmp --silent test_merge.txt linux_test_merge.txt && echo "Pass" || echo "Fail"
+
+sort -n special_case1.txt > linux_test_merge.txt
+./mysort special_case1.txt -o test_merge.txt -t 12 --alg=bucket
+cmp --silent test_merge.txt linux_test_merge.txt && echo "SP1B Pass" || echo "SP1B Fail"
+
+sort -n special_case2.txt > linux_test_merge.txt
+./mysort special_case2.txt -o test_merge.txt -t 12 --alg=bucket
+cmp --silent test_merge.txt linux_test_merge.txt && echo "SP2B Pass" || echo "SP2B Fail"
+
+sort -n special_case3.txt > linux_test_merge.txt
+./mysort special_case3.txt -o test_merge.txt -t 12 --alg=bucket
+cmp --silent test_merge.txt linux_test_merge.txt && echo "SP3B Pass" || echo "SP3B Fail"
+
+sort -n special_case1.txt > linux_test_merge.txt
+./mysort special_case1.txt -o test_merge.txt -t 12 --alg=fj
+cmp --silent test_merge.txt linux_test_merge.txt && echo "SP1fj Pass" || echo "SP1fj Fail"
+
+sort -n special_case2.txt > linux_test_merge.txt
+./mysort special_case2.txt -o test_merge.txt -t 12 --alg=fj
+cmp --silent test_merge.txt linux_test_merge.txt && echo "SP2fj Pass" || echo "SP2fj Fail"
+
+sort -n special_case3.txt > linux_test_merge.txt
+./mysort special_case3.txt -o test_merge.txt -t 12 --alg=fj
+cmp --silent test_merge.txt linux_test_merge.txt && echo "SP3fj Pass" || echo "SP3fj Fail"
