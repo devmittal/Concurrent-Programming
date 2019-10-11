@@ -1,0 +1,13 @@
+#!/bin/bash
+
+get_seeded_random()
+{
+  seed="$1"
+  openssl enc -aes-256-ctr -pass pass:"$seed" -nosalt \
+    </dev/zero 2>/dev/null
+}
+
+shuf -i1-5314 --random-source=<(get_seeded_random 5) > case3.txt
+sort -n case3.txt > soln3.txt
+./mysort case3.txt -o your3.txt
+cmp --silent your3.txt soln3.txt && echo "Pass" || echo "Fail"
