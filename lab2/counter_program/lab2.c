@@ -13,6 +13,7 @@
 #include<time.h>
 #include<string.h>
 #include<pthread.h>
+#include<assert.h>
 #include "locks_barriers.h"
 
 size_t NUM_ITERATIONS;
@@ -171,9 +172,12 @@ void inc_cntr(size_t tid)
 		for(int i = 0; i<NUM_ITERATIONS; i++)
 		{
 			mcs_lock(myNode);
+			//assert(cntr == i);
 			cntr++;
 			mcs_unlock(myNode);
 		}
+
+		free(myNode);
 	}
 
 	else
@@ -206,6 +210,7 @@ void* thread_main(void* args)
 	if(tid==1)
 	{
 		clock_gettime(CLOCK_MONOTONIC,&time_end);
+		//printf("Time:\n");
 	}
 }
 
@@ -330,6 +335,8 @@ int main(int argc, char **argv)
 	fprintf(output_fileptr,"%d\n",cntr);
 
 	fclose(output_fileptr);
+
+	assert(cntr == (NUM_THREADS*NUM_ITERATIONS));
 
 	global_cleanup();
 

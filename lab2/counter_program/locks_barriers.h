@@ -6,7 +6,7 @@
 using namespace std;
 
 struct Node{
-	atomic<struct Node*> next;
+	struct Node* next;
 	atomic<bool> wait;
 };
 

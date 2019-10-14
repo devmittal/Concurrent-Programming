@@ -1,0 +1,4 @@
+#!/bin/bash
+
+./counter -t4 -i500 -o out.txt --lock=mcs
+#cmp --silent out.txt $(4*100) && echo "Pass" || echo "Fail"

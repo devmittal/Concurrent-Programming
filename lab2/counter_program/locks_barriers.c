@@ -35,8 +35,10 @@ void mcs_lock(struct Node* myNode)
 {
 	struct Node* oldTail = tail.load();
 	
-	myNode->next.store(NULL, memory_order_relaxed);
+	//myNode->next.store(NULL, memory_order_relaxed);
 	
+	myNode->next = NULL;
+
 	while(!tail.compare_exchange_strong(oldTail,myNode))
 	{
 		oldTail = tail.load();
@@ -45,7 +47,9 @@ void mcs_lock(struct Node* myNode)
 	if(oldTail != NULL)
 	{
 		myNode->wait.store(true, memory_order_relaxed);
-		oldTail->next.store(myNode);
+		//oldTail->next.store(myNode);
+		oldTail->next = myNode; 
+
 		while(myNode->wait.load());
 	}
 }
@@ -58,7 +62,8 @@ void mcs_unlock(struct Node* myNode)
 	}
 	else
 	{
-		while(myNode->next.load() == NULL);
-		//myNode->next->wait.store(false);//Facing issue here. Atomic variable cannot dereference
+		//while(myNode->next.load() == NULL);
+		while(myNode->next == NULL);
+		myNode->next->wait.store(false);//Facing issue here. Atomic variable cannot dereference. For now made next non atomic and works fine.
 	}
 }
