@@ -1,8 +1,8 @@
 /*****************************************************************************
 ​ ​* ​ ​ @file​ ​  		lab1.c
-​ * ​ ​ @brief​ ​ 		Merge sort and bucket sort using multithreading
+​ * ​ ​ @brief​ ​ 		Increment counter based on locks/barriers
 ​ * ​ ​ @Author(s)​  	​​Devansh Mittal
-​ * ​ ​ @Date​ ​​ 		September 24th, 2019
+​ * ​ ​ @Date​ ​​ 		October 16th, 2019
 ​ * ​ ​ @version​ ​ 		1.0
 *****************************************************************************/
 
@@ -48,9 +48,11 @@ void global_init(void)
 	args = (size_t*)malloc(NUM_THREADS*sizeof(size_t));
 	pthread_barrier_init(&timing_bar, NULL, NUM_THREADS);
 
+	/* Init barrier only if selected */
 	if((barr != NULL) && (!strcmp(barr,"pthread")))
 		pthread_barrier_init(&bar, NULL, NUM_THREADS);
 
+	/* Init mutex only if selected */
 	if((lock != NULL) && (!strcmp(lock,"pthread")))
 		pthread_mutex_init(&inbuilt_lock,NULL);
 }
@@ -162,22 +164,21 @@ void inc_cntr(size_t tid)
 		}
 	}
 
-	/* MCS lock - not working */
+	/* MCS lock */
 	else if((lock != NULL) && (!strcmp(lock,"mcs")))
 	{
 		struct Node* myNode;
 
-		myNode = (struct Node*)malloc(sizeof(struct Node));
+		myNode = (struct Node*)malloc(sizeof(struct Node)); //allocated node for each thread
 
 		for(int i = 0; i<NUM_ITERATIONS; i++)
 		{
 			mcs_lock(myNode);
-			//assert(cntr == i);
 			cntr++;
 			mcs_unlock(myNode);
 		}
 
-		free(myNode);
+		free(myNode); //free allocated node
 	}
 
 	else
@@ -210,7 +211,6 @@ void* thread_main(void* args)
 	if(tid==1)
 	{
 		clock_gettime(CLOCK_MONOTONIC,&time_end);
-		//printf("Time:\n");
 	}
 }
 
@@ -278,12 +278,14 @@ int main(int argc, char **argv)
 		NUM_THREADS = 50;
 	}
 
+	/* Condition to check if both lock and barrier specified. Give errior */
 	if(barr != NULL && lock != NULL)
 	{
 		printf("Both lock and barrier cannot be specified. Run program again specifying only 1.\n");
 		exit(-1);
 	}
 
+	/* Check if output filename not specified */
 	if(output_filename == NULL)
 	{
 		printf("Output file not specified. Run program again specifying output filename\n");
@@ -336,6 +338,7 @@ int main(int argc, char **argv)
 
 	fclose(output_fileptr);
 
+	/* Check if incremented counter value matches expected value */
 	assert(cntr == (NUM_THREADS*NUM_ITERATIONS));
 
 	global_cleanup();
