@@ -13,6 +13,7 @@
 #include<time.h>
 
 //#define DEBUG
+#define openMP
 
 #define MAX_INT_SIZE 10 //max number of digits in integer
 
@@ -69,6 +70,7 @@ void merge_sort(int *elements, int start, int end)
 	{
 		mid = (start + end)/2;
 
+		#ifdef openMP
 		/* Sort the 2 recursive section in parallel using OpenMP */
 		#pragma omp parallel sections
 		{
@@ -81,6 +83,11 @@ void merge_sort(int *elements, int start, int end)
 				merge_sort(elements, (mid+1), end);
 			}
 		}
+		#else
+		merge_sort(elements, start, mid);
+		merge_sort(elements, (mid+1), end);
+		#endif
+
 		merge(elements, start, mid, end);
 	}
 }

@@ -42,7 +42,12 @@ sort -n case3.txt > soln3.txt
 ./mysort case3.txt -o your3.txt
 cmp --silent your3.txt soln3.txt && echo "Pass" || echo "Fail"
 
-shuf -i1-1000000 --random-source=<(get_seeded_random 5090) > case3.txt
+shuf -i1-1350000 --random-source=<(get_seeded_random 5090) > case3.txt
+sort -n case3.txt > soln3.txt
+./mysort case3.txt -o your3.txt
+cmp --silent your3.txt soln3.txt && echo "Pass" || echo "Fail"
+
+shuf -r -n 1304640 -i 0-1000 > case3.txt
 sort -n case3.txt > soln3.txt
 ./mysort case3.txt -o your3.txt
 cmp --silent your3.txt soln3.txt && echo "Pass" || echo "Fail"
