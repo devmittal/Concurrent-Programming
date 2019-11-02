@@ -13,7 +13,6 @@
 #include<time.h>
 
 //#define DEBUG
-#define openMP
 
 #define MAX_INT_SIZE 10 //max number of digits in integer
 
@@ -56,7 +55,7 @@ void merge(int *elements, int start, int mid, int end)
 
 /*
  * @func_name - merge_sort
- * @Description - Divide unsorted array. Parallelized using openMP
+ * @Description - Divide unsorted array.
  * @params - int *elements - pointer to unsorted array
  			 int start - starting index of unsorted array - 0
  			 int end - last index of unsorted array
@@ -70,23 +69,8 @@ void merge_sort(int *elements, int start, int end)
 	{
 		mid = (start + end)/2;
 
-		#ifdef openMP
-		/* Sort the 2 recursive section in parallel using OpenMP */
-		#pragma omp parallel sections
-		{
-			#pragma omp section
-			{
-				merge_sort(elements, start, mid);
-			}
-			#pragma omp section
-			{
-				merge_sort(elements, (mid+1), end);
-			}
-		}
-		#else
 		merge_sort(elements, start, mid);
 		merge_sort(elements, (mid+1), end);
-		#endif
 
 		merge(elements, start, mid, end);
 	}
@@ -163,7 +147,21 @@ int main(int argc, char **argv)
 	}
 
 	clock_gettime(CLOCK_MONOTONIC,&start);
-	merge_sort(unsorted, 0, length-1);	
+
+	/* Separately merge 2 halves of array using different sections and then finally merge into one */
+	#pragma omp parallel sections
+	{
+		#pragma omp section
+		{
+			merge_sort(unsorted, 0, length/2);
+		}
+		#pragma omp section
+		{
+			merge_sort(unsorted,((length/2)+1), length-1);	
+		}
+	}
+
+	merge_sort(unsorted, 0, length-1);
 	clock_gettime(CLOCK_MONOTONIC,&time_end);
 
 	/* If sorted list needs to be outputted to file */
